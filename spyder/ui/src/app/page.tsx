@@ -56,7 +56,7 @@ export default function Page(): JSX.Element {
         setConnectionStatus("Disconnected")
         break
     }
-  }, [])
+  }, [readyState])
 
   /**
    * Effect hook to handle incoming WebSocket messages.
@@ -68,7 +68,7 @@ export default function Page(): JSX.Element {
     }
     setTemperature(lastJsonMessage.battery_temperature)
   }, [lastJsonMessage])
-
+  
   /**
    * Effect hook to set the theme to dark mode.
    */

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, JSX } from "react"
 import useWebSocket, { ReadyState } from "react-use-websocket"
 import { useTheme } from "next-themes"
 import Image from "next/image"
@@ -8,6 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Thermometer } from "lucide-react"
 import Numeric from "../components/custom/numeric"
+import Chart from "../components/custom/chart"
+import PercentageChange from "../components/custom/percentageChange"
 import RedbackLogoDarkMode from "../../public/logo-darkmode.svg"
 import RedbackLogoLightMode from "../../public/logo-lightmode.svg"
 
@@ -35,6 +37,9 @@ export default function Page(): JSX.Element {
       shouldReconnect: () => true,
     },
   )
+
+  const [chartData, setChartData] = useState<number[]>([])
+  const [chartLabels, setChartLabels] = useState<string[]>([])
 
   /**
    * Effect hook to handle WebSocket connection state changes.
@@ -67,6 +72,8 @@ export default function Page(): JSX.Element {
       return
     }
     setTemperature(lastJsonMessage.battery_temperature)
+    setChartData((prevData) => [...prevData, lastJsonMessage.battery_temperature])
+    setChartLabels((prevLabels) => [...prevLabels, new Date(lastJsonMessage.timestamp).toLocaleTimeString()])
   }, [lastJsonMessage])
   
   /**
@@ -85,11 +92,11 @@ export default function Page(): JSX.Element {
           alt="Redback Racing Logo"
         />
         <h1 className="text-foreground text-xl font-semibold">DAQ Technical Assessment</h1>
-        <Badge variant={connectionStatus === "Connected" ? "success" : "destructive"} className="ml-auto">
+        <Badge className={`ml-auto ${connectionStatus === "Connected" ? "bg-green-500" : "bg-red-500"}`}>
           {connectionStatus}
         </Badge>
       </header>
-      <main className="flex-grow flex items-center justify-center p-8">
+      <main className="flex-grow flex flex-row items-center justify-center p-8 gap-8">
         <Card className="w-full max-w-md">
           <CardHeader>
             <CardTitle className="text-2xl font-light flex items-center gap-2">
@@ -97,8 +104,20 @@ export default function Page(): JSX.Element {
               Live Battery Temperature
             </CardTitle>
           </CardHeader>
-          <CardContent className="flex items-center justify-center">
+          <CardContent className="flex flex-col items-center justify-center">
             <Numeric temp={temperature} />
+            <PercentageChange data={chartData} />
+          </CardContent>
+        </Card>
+
+        <Card className="w-full max-w-md">
+          <CardHeader>
+            <CardTitle className="text-2xl font-light flex items-center gap-2">
+              Live Graph
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="flex items-center justify-center">
+            <Chart data={chartData} labels={chartLabels} />
           </CardContent>
         </Card>
       </main>

@@ -35,7 +35,17 @@ Ensure the data displayed from streaming-service is correct to 3 decimal places 
 
 "Ensure the battery temperature value changes colours based on the current temperature (E.g. changing to red when the safe temperature range is exceeded)."
 
-- 
+- Was not able to do this at the time. 
+
+3. added features:
+- Live Graph:
+    Live graph that displays the latest battery temperature data points. The graph slides along with the values, showing only the most recent data points and creating a dynamic, real-time visualization
+
+- Percent change display:
+    Added a component to display the most recent percentage change in battery temperature. This helps users quickly see how much the temperature has increased or decreased compared to the previous value
+
+- Threshold to Line graph:
+    added a horizontal dotted line to the graph to indicate a threshold value. This helps users quickly identify when the battery temperature exceeds a critical level. Also made data points red on graph if threshold was ever exceeded.
 
 
 ## Cloud
